@@ -309,7 +309,7 @@ workflow {
     // if default.best is empty it would throw an index error,
     // best: reduce the 1 "best" hit per family
 
-    best = deduped.best
+    best = deduped.fixed
         .map{meta,bam -> [meta.id, meta.Family, meta.CoveredBP, meta, bam]}
         .toSortedList({ a,b -> a[0]+a[1] <=> b[0]+b[1] ?: a[2] <=> b[2]})
         .flatten()
@@ -329,7 +329,7 @@ workflow {
     // 8. Run Deamination workflow
     //
 
-    deamination_stats( best, deduped.fixed )
+    deamination_stats( best, Channel.empty () )
 
     // get the meta-table from the "best"-libraries
     best = deamination_stats.out.best.map{ it[0] }
